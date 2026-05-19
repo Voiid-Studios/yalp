@@ -1,0 +1,10 @@
+name: ExampleYALPPlugin
+main: dev.maxi.yalp.example.ExampleYALPPlugin
+version: 1.0.0
+description: Example plugin showing how to depend on YALP.
+authors: [maxi sepYT]
+depend: [YALP]
+commands:
+  yalpexample:
+    description: Demonstrates YALP component usage.
+    usage: /yalpexample

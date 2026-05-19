@@ -1,0 +1,6 @@
+name: YALP
+main: dev.maxi.yalp.YALPPlugin
+version: 1.0.0
+description: "yup, another one ¯\\_(ツ)_/¯"
+authors: [maxi sepYT]
+load: STARTUP
