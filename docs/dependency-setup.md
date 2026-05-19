@@ -1,31 +1,22 @@
 # Dependency Setup
 
-## Gradle
-
-```groovy
-repositories {
-    mavenCentral()
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-}
-
-dependencies {
-    compileOnly files("libs/YALP-1.0.0.jar")
-    compileOnly "org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT"
-}
-```
-
-## Maven
-
 ```xml
 <dependency>
-    <groupId>dev.maxi.yalp</groupId>
-    <artifactId>YALP</artifactId>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-core</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-bukkit</artifactId>
     <version>1.0.0</version>
     <scope>provided</scope>
 </dependency>
 ```
 
-Use the local jar or your own Maven repository until YALP is published.
+Use the local Maven reactor, `mvn install`, or your own Maven repository until YALP is published.
 
 ## plugin.yml
 

@@ -1,0 +1,10 @@
+name: ExampleYALPPlugin
+main: voiidstudios.yalp.examples.bukkit.BukkitExamplePlugin
+version: 1.0.0
+description: Example Bukkit plugin showing how to depend on YALP.
+authors: [Voiid Studios]
+depend: [YALP]
+commands:
+  yalpexample:
+    description: Demonstrates YALP component usage.
+    usage: /yalpexample <info|cooldown|gui|hooks|item|scheduler>

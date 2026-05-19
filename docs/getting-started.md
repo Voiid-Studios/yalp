@@ -2,7 +2,7 @@
 
 ## Install YALP
 
-Build the project and place `yalp-core/build/libs/YALP-1.0.0.jar` into your server `plugins/` folder. Restart the server.
+Build the project and place `bukkit/target/YALP-1.0.0.jar` into your server `plugins/` folder. Restart the server.
 
 YALP should print messages like:
 
@@ -15,12 +15,21 @@ YALP should print messages like:
 
 ## Add YALP To Another Plugin
 
-Add the YALP jar to your compile classpath and mark it as `compileOnly`. Do not shade YALP into every plugin; the point is to have one shared dependency plugin.
+Add YALP as provided Maven dependencies. Do not shade YALP into every plugin; the point is to have one shared dependency plugin.
 
-```groovy
-dependencies {
-    compileOnly files("libs/YALP-1.0.0.jar")
-}
+```xml
+<dependency>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-core</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-bukkit</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
 ```
 
 In your plugin's `plugin.yml`:
@@ -33,21 +42,14 @@ depend: [YALP]
 
 ```java
 YALPApi yalp = YALPProvider.get();
-yalp.messages().send(sender, "{prefix} &aReady.");
+String message = yalp.messages().format("{prefix} &aReady.");
 ```
 
-Useful convenience methods:
+Bukkit-specific helpers are available by casting to `BukkitYALPApi`:
 
 ```java
-yalp.compatibility();
-yalp.messages();
-yalp.configs();
-yalp.scheduler();
-yalp.cooldowns();
-yalp.items();
-yalp.hooks();
-yalp.guis();
-yalp.logger();
+BukkitYALPApi yalp = (BukkitYALPApi) YALPProvider.get();
+yalp.messages().send(player, "{prefix} &aReady.");
 ```
 
 For a safer optional lookup:

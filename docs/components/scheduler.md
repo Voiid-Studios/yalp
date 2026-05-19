@@ -1,6 +1,6 @@
 # Scheduler Component
 
-`SchedulerComponent` wraps Bukkit scheduling and uses reflection for Folia schedulers when available.
+The Bukkit scheduler service wraps Bukkit scheduling and uses reflection for Folia schedulers when available.
 
 ```java
 yalp.scheduler().runSync(() -> {
@@ -11,7 +11,7 @@ yalp.scheduler().runAsync(() -> {
     // database or file work
 });
 
-YALPTask task = yalp.scheduler().runLater(() -> {
+ScheduledTask task = yalp.scheduler().runLater(() -> {
     // delayed task
 }, 20L);
 
@@ -31,4 +31,3 @@ yalp.scheduler().runAtLocation(location, () -> {
 ```
 
 On Folia, prefer entity or region methods when touching world, entity, player, chunk, or inventory state.
-

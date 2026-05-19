@@ -1,6 +1,6 @@
 # GUI Component
 
-`GuiComponent` is a tiny inventory helper, not a full menu framework.
+`BukkitGuiComponent` is a tiny inventory helper, not a full menu framework.
 
 ```java
 YALPGui gui = yalp.guis()
@@ -25,4 +25,3 @@ yalp.guis().create("&8Menu", 27)
 ```
 
 The implementation uses Bukkit inventory holders and one listener, so it works on legacy Bukkit.
-

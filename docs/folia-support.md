@@ -2,7 +2,7 @@
 
 Folia splits server work across region-aware schedulers. Code that assumes one global main thread can break when it touches entities, chunks, or worlds.
 
-YALP's `SchedulerComponent` detects Folia with runtime class checks. It does not compile against Folia APIs directly.
+YALP's Bukkit scheduler service detects Folia with runtime class checks. It does not compile against Folia APIs directly.
 
 ## Methods
 

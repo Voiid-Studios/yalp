@@ -1,0 +1,7 @@
+name: YALP
+full-name: Yet Another Library Plugin
+main: voiidstudios.yalp.bukkit.plugin.BukkitYALPPlugin
+version: 1.0.0
+author: Voiid Studios
+description: "yup, another one ¯\\_(ツ)_/¯"
+load: STARTUP

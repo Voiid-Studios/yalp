@@ -3,6 +3,7 @@
 ## Messages
 
 ```java
+BukkitYALPApi yalp = (BukkitYALPApi) YALPProvider.get();
 yalp.messages().send(player, "{prefix} &aHello {player}!", "player", player.getName());
 ```
 
@@ -50,7 +51,7 @@ yalp.scheduler().runAtEntity(player, () ->
 ```
 
 ```java
-YALPTask task = yalp.scheduler().runTimer(() ->
+ScheduledTask task = yalp.scheduler().runTimer(() ->
         getLogger().info("Repeating task."), 20L, 20L);
 task.cancel();
 ```
@@ -117,4 +118,4 @@ gui.open(player);
 
 ## Example Plugin
 
-See `examples/ExampleYALPPlugin` for a complete dependent plugin with `depend: [YALP]`, config loading, compatibility info, hooks, items, GUI, cooldown command usage, and scheduler usage.
+See `examples/bukkit-example` for a complete dependent plugin with `depend: [YALP]`, config loading, compatibility info, hooks, items, GUI, cooldown command usage, and scheduler usage.

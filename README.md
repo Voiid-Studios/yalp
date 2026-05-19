@@ -4,51 +4,68 @@
 
 > yup, another one ¯\\_(ツ)_/¯
 
-YALP is a small shared utility library plugin for Bukkit, Spigot, Paper, and Folia servers. It exists so your own plugins can depend on one reusable base instead of copying message helpers, config wrappers, cooldown maps, scheduler glue, and item builders into every project.
+YALP is a lightweight shared utility library for Minecraft plugins. It is now split into a platform-independent `core` module and a Bukkit-family implementation module.
 
-The first version is intentionally simple: a normal Bukkit plugin, a stable public API, a component registry, and a few practical components.
+Technically it is a plugin. Emotionally, it's a dependency.
 
-## Compatibility
+## Modules
 
-- Targets Java 8 bytecode.
-- Compiles against Bukkit API 1.8.8 for broad legacy compatibility.
-- Avoids `api-version` in `plugin.yml` so Minecraft 1.8 servers do not reject the plugin metadata.
-- Does not depend on PlaceholderAPI, Vault, ProtocolLib, Paper, or Folia.
-- Paper and Folia APIs are detected at runtime and accessed through compatibility wrappers.
+- `core`: platform-independent API contracts, component lifecycle, registry, logging abstraction, message formatting, cooldown logic, scheduler interfaces, and shared service interfaces.
+- `bukkit`: Bukkit/Spigot/Paper/Purpur/Folia implementation. This is the actual server plugin jar.
+- `examples/bukkit-example`: small Bukkit plugin showing how future plugins should integrate with YALP.
 
-## Installation
+Future modules can be added beside these:
 
-1. Build YALP with Gradle.
-2. Put `YALP-1.0.0.jar` in your server `plugins/` folder.
-3. Restart the server.
-4. Add `depend: [YALP]` to plugins that require it.
+```text
+velocity/
+bungeecord/
+```
+
+Those modules should depend on `yalp-core` and implement the same core API for their platform.
 
 ## Build
 
 ```bash
-./gradlew build
+mvn clean package
 ```
 
-On Windows:
+Artifacts:
 
-```powershell
-gradle build
-```
+- `core/target/yalp-core-1.0.0.jar`
+- `bukkit/target/YALP-1.0.0.jar`
+- `examples/bukkit-example/target/yalp-bukkit-example-1.0.0.jar`
 
-Artifacts are written to:
+Install `bukkit/target/YALP-1.0.0.jar` into your server `plugins/` folder.
 
-- `yalp-core/build/libs/YALP-1.0.0.jar`
-- `examples/ExampleYALPPlugin/build/libs/ExampleYALPPlugin-1.0.0.jar`
+## Compatibility
+
+- Java 8 bytecode.
+- Bukkit API is only a provided dependency in the `bukkit` module.
+- `core` has no Bukkit, Paper, Folia, Velocity, or BungeeCord imports.
+- Bukkit module compiles against Bukkit `1.8.8-R0.1-SNAPSHOT`.
+- Paper, Purpur, and Folia are detected at runtime.
+- Folia scheduling is isolated behind reflection-based wrappers.
+- No hard dependency on PlaceholderAPI, Vault, ProtocolLib, LuckPerms, ItemsAdder, WorldEdit, or WorldGuard.
+- `plugin.yml` intentionally avoids `api-version` for 1.8 compatibility.
 
 ## Dependency Setup
 
-For another Gradle project, depend on the YALP API jar as `compileOnly`:
+For another Bukkit plugin:
 
-```groovy
-dependencies {
-    compileOnly files("libs/YALP-1.0.0.jar")
-    compileOnly "org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT"
-}
+```xml
+<dependency>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-core</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>voiidstudios</groupId>
+    <artifactId>yalp-bukkit</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
 ```
 
 In `plugin.yml`:
@@ -57,66 +74,48 @@ In `plugin.yml`:
 depend: [YALP]
 ```
 
-Use `depend` when your plugin cannot run without YALP. Use `softdepend` only if your plugin has a fallback path when YALP is missing.
+Use `depend` when your plugin requires YALP. Use `softdepend` only when your plugin can run without it.
 
 ## API Usage
 
+Core access:
+
 ```java
 YALPApi yalp = YALPProvider.get();
-MessagesComponent messages = yalp.getComponent(MessagesComponent.class).orElseThrow(
-        () -> new IllegalStateException("YALP messages component is missing"));
-
-messages.send(sender, "{prefix} &aHello from YALP.");
+yalp.logger().info("yup");
+yalp.messages().format("{prefix} &aHello {player}!", "player", "Maxi");
+yalp.cooldowns().setCooldown(playerId, "kit", Duration.ofSeconds(30));
 ```
 
-Convenience methods are also available:
+Bukkit-specific access:
 
 ```java
-yalp.messages().send(sender, "&aYup.");
-yalp.cooldowns().setCooldown(player.getUniqueId(), "example", Duration.ofSeconds(5));
-yalp.scheduler().runLater(() -> getLogger().info("Later."), 20L);
+BukkitYALPApi yalp = (BukkitYALPApi) YALPProvider.get();
+yalp.messages().send(player, "{prefix} &aHello {player}!", "player", player.getName());
+yalp.items().create("PLAYER_HEAD").ifPresent(item -> player.getInventory().addItem(item));
 ```
 
 ## Components
 
-- `logger`: console output helpers with optional debug mode.
-- `compatibility`: best-effort server software and feature checks.
-- `messages`: color codes and basic `{placeholder}` replacement.
-- `config`: YAML loading, saving, and reloading helpers.
-- `scheduler`: Bukkit/Paper/Folia-aware task scheduling facade.
-- `cooldown`: UUID and key based cooldown manager.
-- `itembuilder`: legacy-compatible `ItemStack` builder and material resolver.
-- `hooks`: safe optional-plugin detection by plugin name.
-- `gui`: tiny inventory GUI helper with click handlers.
-
-## Convenience API
-
-```java
-YALPApi yalp = YALPProvider.get();
-
-yalp.logger().info("Folia? " + yalp.compatibility().isFolia());
-yalp.messages().send(player, "{prefix} &aHello {player}!", "player", player.getName());
-yalp.cooldowns().setCooldown(player.getUniqueId(), "kit", Duration.ofSeconds(30));
-yalp.scheduler().runAtEntity(player, () -> player.sendMessage("Safe-ish on Folia."));
-yalp.items().create("PLAYER_HEAD").ifPresent(item -> player.getInventory().addItem(item));
-yalp.hooks().hasPlaceholderAPI();
-```
+- `messages`: color codes, placeholders, lines, prefix helpers.
+- `config`: Bukkit YAML config loading/saving.
+- `scheduler`: Bukkit scheduler with Folia-aware reflection wrappers.
+- `cooldown`: platform-neutral cooldown logic with Bukkit cleanup scheduling.
+- `items`: Bukkit material compatibility and item builder.
+- `hooks`: optional plugin detection by name.
+- `gui`: tiny Bukkit inventory GUI helper.
+- `compatibility`: best-effort server feature checks.
+- `logger`: readable console output with debug mode.
 
 Component docs live in `docs/components/`.
 
-## Folia Notes
+## MiniBoot
 
-Folia has different threading rules than classic Bukkit. YALP detects Folia at runtime and uses reflection to call region, entity, async, and global schedulers where available. `runSync` means "run through the safest available server scheduler", not "force this exact thread".
-
-Prefer `runAtEntity` or `runRegion` when the task touches entity or world state on Folia.
-
-## Legacy Notes
-
-YALP compiles against Spigot 1.8.8. Modern-only APIs should stay behind reflection or version checks. If a future component needs newer server APIs, put that behavior behind a compatibility wrapper.
+YALP does not auto-install itself. Other plugins may document or implement an optional MiniBoot pattern, but it must be transparent, configurable, one-time only, and should tell the admin to restart. Do not silently download dependencies. Do not reinstall YALP after an admin removes it.
 
 ## Reload Warning
 
-Runtime reload tools can leave dependency plugins in a weird state. If YALP sees a reload-like lifecycle, it prints:
+Runtime reload tools can leave dependency plugins in strange states. YALP keeps the warning:
 
 ```text
 *****************************************************************
@@ -129,26 +128,26 @@ Runtime reload tools can leave dependency plugins in a weird state. If YALP sees
 [YALP] another reload ¯\_(ツ)_/¯
 ```
 
-Restart the server cleanly before debugging dependency weirdness.
+## FAQ
 
-## MiniBoot Pattern
+**Is YALP a plugin?**  
+Technically yes. Emotionally, it's a dependency.
 
-YALP does not auto-download itself. Other plugins may optionally implement a transparent "MiniBoot" bootstrap, but it should be explicit, logged, configurable, and one-time only.
+**Why is the logo just ¯\\_(ツ)_/¯ ?**  
+why not
 
-Recommended behavior:
+**Can I use YALP in my own plugins?**  
+yup
 
-- If YALP is missing on first install, download it only from a trusted configured URL.
-- Write `plugins/<PluginName>/miniboot.yml` with `once-installed: true`.
-- Tell the admin to restart.
-- If the admin later removes YALP, do not reinstall automatically.
-- Print a clear error asking the admin to reinstall YALP manually.
-- Avoid hot-loading YALP unless you have verified it is safe for that server.
+**Is this the Lua YALP?**  
+No. This one is for Minecraft.
 
-See `docs/dependency-setup.md` for pseudocode.
+**Will YALP auto-install itself?**  
+No.
 
 ## Roadmap
 
-- Add optional PlaceholderAPI/Vault hooks as separate components.
-- Add command, inventory, and database utility components.
-- Publish API artifacts to a Maven repository.
-- Add tests around component dependency ordering and cooldown behavior.
+- Add optional platform modules for Velocity and BungeeCord.
+- Add optional integrations as separate modules.
+- Add more material mappings as needed.
+- Publish artifacts to a Maven repository.

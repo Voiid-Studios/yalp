@@ -1,6 +1,6 @@
 # Item And Material Helpers
 
-`ItemBuilderComponent` remains the item builder and now also provides version-safe material resolution.
+`BukkitItemBuilder` provides version-safe material resolution and item building in the Bukkit module.
 
 ```java
 Optional<ItemStack> head = yalp.items().create("PLAYER_HEAD");
@@ -26,4 +26,3 @@ ItemStack item = yalp.items()
 ```
 
 Unknown materials return `Optional.empty()` from `create`. Builder fallback uses stone and logs only in debug mode.
-

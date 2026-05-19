@@ -1,6 +1,6 @@
 # Modules
 
-YALP features are organized as components. A component has an id, lifecycle methods, and optional dependencies on other YALP components.
+YALP features are organized as components. Core defines the lifecycle and registry; platform modules register their own implementations.
 
 ## Lifecycle
 
@@ -41,15 +41,15 @@ public final class MyComponent implements YALPComponent {
 }
 ```
 
-Register internal components in `YALPPlugin#onLoad`. The registry prevents duplicate ids and duplicate component classes.
+Register internal components in the platform plugin lifecycle. The Bukkit module registers components in `BukkitYALPPlugin#onLoad`.
 
 ## Future Folder Structure
 
-Recommended package layout for new components:
+Recommended package layout for platform-neutral components:
 
 ```text
-dev.maxi.yalp.api.<component>        public component API
-dev.maxi.yalp.internal.<component>   private implementation helpers
+voiidstudios.yalp.core.<component>      public contract or shared implementation
+voiidstudios.yalp.bukkit.<component>    Bukkit implementation
 ```
 
 Keep public APIs small. Put server-version tricks and reflection in internal helpers when a component grows.
@@ -59,9 +59,9 @@ Keep public APIs small. Put server-version tricks and reflection in internal hel
 - `logger`: readable console output and debug mode.
 - `compatibility`: best-effort server and feature checks.
 - `messages`: colors, placeholders, lines, prefix utilities.
-- `config`: YAML helpers.
-- `scheduler`: Bukkit/Folia scheduler abstraction.
-- `cooldown`: UUID and global cooldowns.
-- `itembuilder`: item builder and material compatibility helpers.
-- `hooks`: optional plugin detection.
-- `gui`: minimal inventory menu helper.
+- `config`: Bukkit YAML helpers.
+- `scheduler`: core interface, Bukkit/Folia implementation.
+- `cooldown`: core logic, Bukkit cleanup scheduling.
+- `items`: Bukkit item builder and material compatibility helpers.
+- `hooks`: Bukkit optional plugin detection.
+- `gui`: Bukkit minimal inventory menu helper.
