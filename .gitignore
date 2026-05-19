@@ -2,5 +2,7 @@
 build/
 **/build/
 out/
+bin/
+**/bin/
 *.iml
 .idea/

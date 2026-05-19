@@ -36,10 +36,23 @@ YALPApi yalp = YALPProvider.get();
 yalp.messages().send(sender, "{prefix} &aReady.");
 ```
 
+Useful convenience methods:
+
+```java
+yalp.compatibility();
+yalp.messages();
+yalp.configs();
+yalp.scheduler();
+yalp.cooldowns();
+yalp.items();
+yalp.hooks();
+yalp.guis();
+yalp.logger();
+```
+
 For a safer optional lookup:
 
 ```java
 yalp.getComponent(MessagesComponent.class).ifPresent(messages ->
         messages.send(sender, "&aMessages component is available."));
 ```
-

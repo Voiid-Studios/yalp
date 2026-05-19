@@ -3,9 +3,13 @@ package dev.maxi.yalp.internal;
 import dev.maxi.yalp.api.YALPApi;
 import dev.maxi.yalp.api.component.ComponentRegistry;
 import dev.maxi.yalp.api.component.YALPComponent;
+import dev.maxi.yalp.api.compat.CompatibilityComponent;
 import dev.maxi.yalp.api.config.ConfigComponent;
 import dev.maxi.yalp.api.cooldown.CooldownComponent;
+import dev.maxi.yalp.api.gui.GuiComponent;
+import dev.maxi.yalp.api.hooks.HooksComponent;
 import dev.maxi.yalp.api.item.ItemBuilderComponent;
+import dev.maxi.yalp.api.logger.LoggerComponent;
 import dev.maxi.yalp.api.message.MessagesComponent;
 import dev.maxi.yalp.api.scheduler.SchedulerComponent;
 import dev.maxi.yalp.api.util.YALPLogger;
@@ -49,6 +53,16 @@ public final class YALPApiImpl implements YALPApi {
     }
 
     @Override
+    public LoggerComponent logger() {
+        return require(LoggerComponent.class);
+    }
+
+    @Override
+    public CompatibilityComponent compatibility() {
+        return require(CompatibilityComponent.class);
+    }
+
+    @Override
     public MessagesComponent messages() {
         return require(MessagesComponent.class);
     }
@@ -71,6 +85,21 @@ public final class YALPApiImpl implements YALPApi {
     @Override
     public ItemBuilderComponent itemBuilder() {
         return require(ItemBuilderComponent.class);
+    }
+
+    @Override
+    public ItemBuilderComponent items() {
+        return itemBuilder();
+    }
+
+    @Override
+    public HooksComponent hooks() {
+        return require(HooksComponent.class);
+    }
+
+    @Override
+    public GuiComponent guis() {
+        return require(GuiComponent.class);
     }
 
     private <T extends YALPComponent> T require(Class<T> type) {

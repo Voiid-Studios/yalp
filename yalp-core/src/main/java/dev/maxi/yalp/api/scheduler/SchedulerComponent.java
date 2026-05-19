@@ -96,6 +96,10 @@ public final class SchedulerComponent implements YALPComponent {
         }
     }
 
+    public YALPTask runAtLocation(Location location, Runnable runnable) {
+        return runRegion(location, runnable);
+    }
+
     public boolean isFolia() {
         return compatibility != null && compatibility.isFolia();
     }

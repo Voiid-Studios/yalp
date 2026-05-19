@@ -12,6 +12,7 @@ YALP's `SchedulerComponent` detects Folia with runtime class checks. It does not
 - `runTimer(Runnable, delay, period)`: repeating task through the safest available scheduler.
 - `runAtEntity(Entity, Runnable)`: Folia entity scheduler when available, otherwise sync fallback.
 - `runRegion(Location, Runnable)`: Folia region scheduler when available, otherwise sync fallback.
+- `runAtLocation(Location, Runnable)`: alias for region scheduling.
 
 ## Safe Usage
 
@@ -27,4 +28,3 @@ For pure logging, cache cleanup, web requests, or cooldown cleanup, async/global
 ## Limitations
 
 Reflection keeps the jar compatible with older Spigot servers, but it also means YALP only exposes conservative scheduler behavior. Future versions can add richer Folia-specific utilities without making Folia a hard dependency.
-

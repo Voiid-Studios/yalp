@@ -2,9 +2,13 @@ package dev.maxi.yalp;
 
 import dev.maxi.yalp.api.YALPProvider;
 import dev.maxi.yalp.api.component.ComponentContext;
+import dev.maxi.yalp.api.compat.CompatibilityComponent;
 import dev.maxi.yalp.api.config.ConfigComponent;
 import dev.maxi.yalp.api.cooldown.CooldownComponent;
+import dev.maxi.yalp.api.gui.GuiComponent;
+import dev.maxi.yalp.api.hooks.HooksComponent;
 import dev.maxi.yalp.api.item.ItemBuilderComponent;
+import dev.maxi.yalp.api.logger.LoggerComponent;
 import dev.maxi.yalp.api.message.MessagesComponent;
 import dev.maxi.yalp.api.platform.ServerCompatibility;
 import dev.maxi.yalp.api.scheduler.SchedulerComponent;
@@ -24,17 +28,22 @@ public final class YALPPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        saveDefaultConfig();
         yalpLogger = new YALPLogger(getLogger());
         ServerCompatibility compatibility = ServerCompatibility.detect();
         components = new ComponentManager(yalpLogger);
         api = new YALPApiImpl(getDescription().getVersion(), components, yalpLogger);
         YALPProvider.set(api);
 
+        components.register(new LoggerComponent(yalpLogger));
+        components.register(new CompatibilityComponent());
         components.register(new MessagesComponent());
         components.register(new ConfigComponent());
         components.register(new SchedulerComponent());
         components.register(new CooldownComponent());
         components.register(new ItemBuilderComponent());
+        components.register(new HooksComponent());
+        components.register(new GuiComponent());
         components.loadAll(new ComponentContext(this, api, yalpLogger, compatibility));
     }
 

@@ -79,11 +79,30 @@ yalp.scheduler().runLater(() -> getLogger().info("Later."), 20L);
 
 ## Components
 
+- `logger`: console output helpers with optional debug mode.
+- `compatibility`: best-effort server software and feature checks.
 - `messages`: color codes and basic `{placeholder}` replacement.
 - `config`: YAML loading, saving, and reloading helpers.
 - `scheduler`: Bukkit/Paper/Folia-aware task scheduling facade.
 - `cooldown`: UUID and key based cooldown manager.
-- `itembuilder`: legacy-compatible `ItemStack` builder.
+- `itembuilder`: legacy-compatible `ItemStack` builder and material resolver.
+- `hooks`: safe optional-plugin detection by plugin name.
+- `gui`: tiny inventory GUI helper with click handlers.
+
+## Convenience API
+
+```java
+YALPApi yalp = YALPProvider.get();
+
+yalp.logger().info("Folia? " + yalp.compatibility().isFolia());
+yalp.messages().send(player, "{prefix} &aHello {player}!", "player", player.getName());
+yalp.cooldowns().setCooldown(player.getUniqueId(), "kit", Duration.ofSeconds(30));
+yalp.scheduler().runAtEntity(player, () -> player.sendMessage("Safe-ish on Folia."));
+yalp.items().create("PLAYER_HEAD").ifPresent(item -> player.getInventory().addItem(item));
+yalp.hooks().hasPlaceholderAPI();
+```
+
+Component docs live in `docs/components/`.
 
 ## Folia Notes
 
@@ -130,7 +149,6 @@ See `docs/dependency-setup.md` for pseudocode.
 ## Roadmap
 
 - Add optional PlaceholderAPI/Vault hooks as separate components.
-- Add versioned material helpers for legacy and modern item names.
 - Add command, inventory, and database utility components.
 - Publish API artifacts to a Maven repository.
 - Add tests around component dependency ordering and cooldown behavior.

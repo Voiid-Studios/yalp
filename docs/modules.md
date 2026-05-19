@@ -54,3 +54,14 @@ dev.maxi.yalp.internal.<component>   private implementation helpers
 
 Keep public APIs small. Put server-version tricks and reflection in internal helpers when a component grows.
 
+## Current Components
+
+- `logger`: readable console output and debug mode.
+- `compatibility`: best-effort server and feature checks.
+- `messages`: colors, placeholders, lines, prefix utilities.
+- `config`: YAML helpers.
+- `scheduler`: Bukkit/Folia scheduler abstraction.
+- `cooldown`: UUID and global cooldowns.
+- `itembuilder`: item builder and material compatibility helpers.
+- `hooks`: optional plugin detection.
+- `gui`: minimal inventory menu helper.
