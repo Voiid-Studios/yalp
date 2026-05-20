@@ -31,11 +31,45 @@ mvn clean package
 
 Artifacts:
 
-- `core/target/yalp-core-1.0.0.jar`
-- `bukkit/target/YALP-1.0.0.jar`
-- `examples/bukkit-example/target/yalp-bukkit-example-1.0.0.jar`
+- `core/target/yalp-core-VERSION.jar`
+- `bukkit/target/YALP-VERSION.jar`
+- `examples/bukkit-example/target/yalp-bukkit-example-VERSION.jar`
 
-Install `bukkit/target/YALP-1.0.0.jar` into your server `plugins/` folder.
+Install `bukkit/target/YALP-VERSION.jar` into your server `plugins/` folder. Replace `VERSION` with the latest GitHub release tag.
+
+## Documentation
+
+MkDocs source lives in:
+
+```text
+docs/mkdocs/
+```
+
+Build or serve it locally with:
+
+```bash
+mkdocs build
+mkdocs serve
+```
+
+JavaDocs are separate API reference output:
+
+```bash
+mvn javadoc:aggregate
+```
+
+Generated JavaDocs are written to:
+
+```text
+target/site/apidocs/
+```
+
+Suggested GitHub Pages layout:
+
+```text
+/YALP/      -> MkDocs site
+/YALP/jd/   -> JavaDocs API reference
+```
 
 ## Compatibility
 
@@ -56,14 +90,14 @@ For another Bukkit plugin:
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-core</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-bukkit</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -127,7 +161,11 @@ Bukkit-specific:
 - Bukkit JSON files
 - Bukkit rich text fallback sending
 
-Component docs live in `docs/components/`.
+Replace `VERSION` with the latest GitHub release tag.
+
+If using JitPack later, add the JitPack repository and use the release tag as `VERSION`.
+
+Component docs live in `docs/mkdocs/components/`.
 
 ## Example Commands
 

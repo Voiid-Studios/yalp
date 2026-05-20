@@ -4,19 +4,34 @@
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-core</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-bukkit</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 ```
 
+Replace `VERSION` with the latest GitHub release tag.
+
 Use the local Maven reactor, `mvn install`, or your own Maven repository until YALP is published.
+
+## JitPack
+
+If YALP is published through JitPack later, add:
+
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+Then use the latest GitHub release tag as `VERSION`.
 
 ## plugin.yml
 

@@ -2,7 +2,7 @@
 
 ## Install YALP
 
-Build the project and place `bukkit/target/YALP-1.0.0.jar` into your server `plugins/` folder. Restart the server.
+Build the project and place `bukkit/target/YALP-VERSION.jar` into your server `plugins/` folder. Replace `VERSION` with the latest GitHub release tag. Restart the server.
 
 YALP should print messages like:
 
@@ -21,13 +21,13 @@ Add YALP as provided Maven dependencies. Do not shade YALP into every plugin; th
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-core</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 <dependency>
     <groupId>voiidstudios</groupId>
     <artifactId>yalp-bukkit</artifactId>
-    <version>1.0.0</version>
+    <version>VERSION</version>
     <scope>provided</scope>
 </dependency>
 ```

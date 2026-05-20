@@ -1,0 +1,34 @@
+site_name: YALP
+site_description: Yet Another Library Plugin
+docs_dir: docs/mkdocs
+
+theme:
+  name: mkdocs
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Dependency Setup: dependency-setup.md
+  - Platform Architecture: platform-architecture.md
+  - Modules: modules.md
+  - Folia Support: folia-support.md
+  - Examples: examples.md
+  - Components:
+      - Compatibility: components/compatibility.md
+      - Messages: components/messages.md
+      - Config: components/config.md
+      - Scheduler: components/scheduler.md
+      - Cooldowns: components/cooldowns.md
+      - Items: components/items.md
+      - Hooks: components/hooks.md
+      - GUI: components/gui.md
+      - Logger: components/logger.md
+      - Translations: components/translations.md
+      - Commands: components/commands.md
+      - Resources: components/resources.md
+      - JSON Files: components/json-files.md
+      - Rich Text: components/rich-text.md
+      - YAML Folder Registry: components/yaml-folder-registry.md
+      - Utilities: components/utilities.md
+      - Platform Adapter: components/platform-adapter.md
+  - JavaDocs Reference: javadocs.md
