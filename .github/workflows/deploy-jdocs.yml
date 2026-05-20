@@ -30,13 +30,13 @@ jobs:
 
       - name: Checkout source branch
         if: steps.branch.outputs.valid == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: source
 
       - name: Set up Java 25
         if: steps.branch.outputs.valid == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
@@ -55,23 +55,33 @@ jobs:
           rm -rf javadocs-site
           mkdir -p javadocs-site
 
-          if [ -f source/target/site/apidocs/index.html ]; then
-            echo "Using source/target/site/apidocs"
-            cp -R source/target/site/apidocs/. javadocs-site/
-          elif [ -f source/target/site/apidocs/apidocs/index.html ]; then
-            echo "Using nested source/target/site/apidocs/apidocs"
-            cp -R source/target/site/apidocs/apidocs/. javadocs-site/
-          else
+          echo "Searching for generated JavaDocs..."
+          find source -type f -name "index.html" | sort
+
+          JDOC_INDEX="$(find source -type f -path "*/apidocs/index.html" | head -n 1 || true)"
+
+          if [ -z "$JDOC_INDEX" ]; then
+            echo "No apidocs/index.html found. Searching broader..."
+            JDOC_INDEX="$(find source -type f -name "index.html" | grep -E "/(apidocs|javadocs|reports)/" | head -n 1 || true)"
+          fi
+
+          if [ -z "$JDOC_INDEX" ]; then
             echo "JavaDocs index.html not found."
-            echo "Generated files:"
-            find source/target/site -maxdepth 5 -type f | sort || true
+            echo "Generated target files:"
+            find source -path "*/target/*" -type f | sort || true
             exit 1
           fi
 
-          # Extra safety: if something still leaves apidocs inside the output,
-          # flatten it so the final URL is /yalp/ instead of /yalp/apidocs/.
+          JDOC_DIR="$(dirname "$JDOC_INDEX")"
+
+          echo "Using JavaDocs directory: $JDOC_DIR"
+          cp -R "$JDOC_DIR/." javadocs-site/
+
+          # Extra safety:
+          # If the output still contains an apidocs folder inside itself,
+          # flatten it so the final URL is /yalp/ and not /yalp/apidocs/.
           if [ ! -f javadocs-site/index.html ] && [ -f javadocs-site/apidocs/index.html ]; then
-            echo "Flattening apidocs folder..."
+            echo "Flattening nested apidocs folder..."
 
             TEMP_DIR="$(mktemp -d)"
             cp -R javadocs-site/apidocs/. "$TEMP_DIR/"
@@ -80,6 +90,12 @@ jobs:
 
             cp -R "$TEMP_DIR/." javadocs-site/
             rm -rf "$TEMP_DIR"
+          fi
+
+          if [ ! -f javadocs-site/index.html ]; then
+            echo "Final JavaDocs site still has no index.html."
+            find javadocs-site -maxdepth 5 -type f | sort || true
+            exit 1
           fi
 
           touch javadocs-site/.nojekyll
