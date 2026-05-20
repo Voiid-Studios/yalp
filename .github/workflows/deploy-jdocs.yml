@@ -6,6 +6,9 @@ on:
       - docs
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   deploy-javadocs:
     if: ${{ github.ref_name != 'docs' }}
@@ -31,33 +34,52 @@ jobs:
         with:
           path: source
 
-      - name: Set up Java
+      - name: Set up Java 25
         if: steps.branch.outputs.valid == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 8
+          java-version: '25'
+          cache: maven
 
-      - name: Build JavaDocs
+      - name: Build project and JavaDocs
         if: steps.branch.outputs.valid == 'true'
         working-directory: source
         run: |
-          mvn clean package
-          mvn javadoc:aggregate
+          mvn -B clean package
+          mvn -B javadoc:aggregate
 
       - name: Prepare JavaDocs site
         if: steps.branch.outputs.valid == 'true'
         run: |
+          rm -rf javadocs-site
           mkdir -p javadocs-site
 
           if [ -f source/target/site/apidocs/index.html ]; then
+            echo "Using source/target/site/apidocs"
             cp -R source/target/site/apidocs/. javadocs-site/
           elif [ -f source/target/site/apidocs/apidocs/index.html ]; then
+            echo "Using nested source/target/site/apidocs/apidocs"
             cp -R source/target/site/apidocs/apidocs/. javadocs-site/
           else
             echo "JavaDocs index.html not found."
-            find source/target/site -maxdepth 5 -type f | sort
+            echo "Generated files:"
+            find source/target/site -maxdepth 5 -type f | sort || true
             exit 1
+          fi
+
+          # Extra safety: if something still leaves apidocs inside the output,
+          # flatten it so the final URL is /yalp/ instead of /yalp/apidocs/.
+          if [ ! -f javadocs-site/index.html ] && [ -f javadocs-site/apidocs/index.html ]; then
+            echo "Flattening apidocs folder..."
+
+            TEMP_DIR="$(mktemp -d)"
+            cp -R javadocs-site/apidocs/. "$TEMP_DIR/"
+
+            find javadocs-site -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+            cp -R "$TEMP_DIR/." javadocs-site/
+            rm -rf "$TEMP_DIR"
           fi
 
           touch javadocs-site/.nojekyll
@@ -76,6 +98,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add .
+
+          if git diff --cached --quiet; then
+            echo "No JavaDocs changes to deploy."
+            exit 0
+          fi
+
           git commit -m "Deploy JavaDocs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
 
           git remote add origin https://x-access-token:${DOCS_DEPLOY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
