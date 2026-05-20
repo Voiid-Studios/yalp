@@ -7,17 +7,25 @@ import voiidstudios.yalp.core.component.registry.ComponentManager;
 import voiidstudios.yalp.core.component.registry.ComponentRegistry;
 import voiidstudios.yalp.core.config.ConfigService;
 import voiidstudios.yalp.core.cooldown.CooldownService;
+import voiidstudios.yalp.core.commands.CommandService;
+import voiidstudios.yalp.core.definitions.YamlFolderService;
 import voiidstudios.yalp.core.hooks.HooksService;
+import voiidstudios.yalp.core.json.JsonFileService;
 import voiidstudios.yalp.core.logging.YALPLogger;
 import voiidstudios.yalp.core.messages.MessageFormatter;
+import voiidstudios.yalp.core.platform.PlatformAdapter;
 import voiidstudios.yalp.core.platform.PlatformInfo;
+import voiidstudios.yalp.core.resources.ResourceService;
 import voiidstudios.yalp.core.scheduler.SchedulerService;
+import voiidstudios.yalp.core.text.RichTextService;
+import voiidstudios.yalp.core.translation.TranslationService;
 
 import java.util.Optional;
 
 public class DefaultYALPApi implements YALPApi {
     private final String version;
     private final PlatformInfo platform;
+    private final PlatformAdapter platformAdapter;
     private final ComponentManager components;
     private final YALPLogger logger;
     private final MessageFormatter messages;
@@ -26,12 +34,21 @@ public class DefaultYALPApi implements YALPApi {
     private final ConfigService configs;
     private final HooksService hooks;
     private final CompatibilityService compatibility;
+    private final TranslationService translations;
+    private final YamlFolderService yamlFolders;
+    private final CommandService commands;
+    private final ResourceService resources;
+    private final JsonFileService jsonFiles;
+    private final RichTextService richText;
 
-    public DefaultYALPApi(String version, PlatformInfo platform, ComponentManager components, YALPLogger logger,
+    public DefaultYALPApi(String version, PlatformInfo platform, PlatformAdapter platformAdapter, ComponentManager components, YALPLogger logger,
                           MessageFormatter messages, CooldownService cooldowns, SchedulerService scheduler,
-                          ConfigService configs, HooksService hooks, CompatibilityService compatibility) {
+                          ConfigService configs, HooksService hooks, CompatibilityService compatibility,
+                          TranslationService translations, YamlFolderService yamlFolders, CommandService commands,
+                          ResourceService resources, JsonFileService jsonFiles, RichTextService richText) {
         this.version = version;
         this.platform = platform;
+        this.platformAdapter = platformAdapter;
         this.components = components;
         this.logger = logger;
         this.messages = messages;
@@ -40,6 +57,12 @@ public class DefaultYALPApi implements YALPApi {
         this.configs = configs;
         this.hooks = hooks;
         this.compatibility = compatibility;
+        this.translations = translations;
+        this.yamlFolders = yamlFolders;
+        this.commands = commands;
+        this.resources = resources;
+        this.jsonFiles = jsonFiles;
+        this.richText = richText;
     }
 
     @Override
@@ -50,6 +73,11 @@ public class DefaultYALPApi implements YALPApi {
     @Override
     public PlatformInfo platform() {
         return platform;
+    }
+
+    @Override
+    public PlatformAdapter platformAdapter() {
+        return platformAdapter;
     }
 
     @Override
@@ -100,5 +128,35 @@ public class DefaultYALPApi implements YALPApi {
     @Override
     public CompatibilityService compatibility() {
         return compatibility;
+    }
+
+    @Override
+    public TranslationService translations() {
+        return translations;
+    }
+
+    @Override
+    public YamlFolderService yamlFolders() {
+        return yamlFolders;
+    }
+
+    @Override
+    public CommandService commands() {
+        return commands;
+    }
+
+    @Override
+    public ResourceService resources() {
+        return resources;
+    }
+
+    @Override
+    public JsonFileService jsonFiles() {
+        return jsonFiles;
+    }
+
+    @Override
+    public RichTextService richText() {
+        return richText;
     }
 }

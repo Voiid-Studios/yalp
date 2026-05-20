@@ -7,4 +7,4 @@ depend: [YALP]
 commands:
   yalpexample:
     description: Demonstrates YALP component usage.
-    usage: /yalpexample <info|cooldown|gui|hooks|item|scheduler>
+    usage: /yalpexample help

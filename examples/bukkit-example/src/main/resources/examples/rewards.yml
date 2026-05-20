@@ -1,0 +1,8 @@
+rewards:
+  welcome:
+    enabled: true
+    name: "Welcome Reward"
+    description: "Simple message reward example."
+    type: "message"
+    options:
+      message: "&aWelcome {player}!"

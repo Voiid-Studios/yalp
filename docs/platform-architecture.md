@@ -15,6 +15,9 @@ YALP is split into platform-neutral contracts and platform implementations.
 - scheduler interfaces
 - config, hooks, and compatibility service interfaces
 - platform metadata types
+- platform adapter contracts
+- translations, commands, resources, JSON, rich text, and YAML definition contracts
+- small Java 8 utility helpers
 
 `core` must not import Bukkit, Paper, Folia, Velocity, BungeeCord, or any other server API.
 
@@ -33,6 +36,8 @@ It owns:
 - Bukkit hooks detection
 - Bukkit/Folia scheduler wrappers
 - Bukkit compatibility detection
+- Bukkit platform adapter
+- Bukkit translation, command, resource, JSON, rich text, and YAML definition implementations
 
 ## Future Platforms
 

@@ -43,6 +43,10 @@ depend: [YALP]
 ```java
 YALPApi yalp = YALPProvider.get();
 String message = yalp.messages().format("{prefix} &aReady.");
+yalp.cooldowns().setCooldown(playerId, "kit", Duration.ofSeconds(30));
+yalp.translations();
+yalp.resources();
+yalp.richText();
 ```
 
 Bukkit-specific helpers are available by casting to `BukkitYALPApi`:
@@ -50,11 +54,13 @@ Bukkit-specific helpers are available by casting to `BukkitYALPApi`:
 ```java
 BukkitYALPApi yalp = (BukkitYALPApi) YALPProvider.get();
 yalp.messages().send(player, "{prefix} &aReady.");
+yalp.items().create("PLAYER_HEAD");
+yalp.guis().create("&8Menu", 27);
 ```
 
 For a safer optional lookup:
 
 ```java
-yalp.getComponent(MessagesComponent.class).ifPresent(messages ->
-        messages.send(sender, "&aMessages component is available."));
+yalp.getComponent(YALPComponent.class).ifPresent(component ->
+        yalp.logger().info("Found component: " + component.getId()));
 ```

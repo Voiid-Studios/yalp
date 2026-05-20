@@ -97,17 +97,61 @@ yalp.items().create("PLAYER_HEAD").ifPresent(item -> player.getInventory().addIt
 
 ## Components
 
-- `messages`: color codes, placeholders, lines, prefix helpers.
-- `config`: Bukkit YAML config loading/saving.
-- `scheduler`: Bukkit scheduler with Folia-aware reflection wrappers.
-- `cooldown`: platform-neutral cooldown logic with Bukkit cleanup scheduling.
-- `items`: Bukkit material compatibility and item builder.
-- `hooks`: optional plugin detection by name.
-- `gui`: tiny Bukkit inventory GUI helper.
-- `compatibility`: best-effort server feature checks.
-- `logger`: readable console output with debug mode.
+Core/platform-neutral:
+
+- Component registry
+- Logger API and log levels
+- Message formatter
+- Translation API
+- Cooldowns
+- Platform adapter contracts
+- Scheduler contracts
+- YAML definition registry contracts
+- Command contracts
+- Resource, JSON, and rich text contracts
+- Utility helpers
+
+Bukkit-specific:
+
+- Bukkit plugin implementation
+- Bukkit scheduler/Folia scheduler
+- Bukkit YAML configs
+- Bukkit command sender messages
+- Bukkit item compatibility
+- Bukkit GUI utilities
+- Bukkit hooks detection
+- Bukkit translation file loading
+- Bukkit YAML folder registries
+- Bukkit command wrapper
+- Bukkit resource copying
+- Bukkit JSON files
+- Bukkit rich text fallback sending
 
 Component docs live in `docs/components/`.
+
+## Example Commands
+
+The Bukkit example demonstrates:
+
+- `/yalpexample help`
+- `/yalpexample info`
+- `/yalpexample logger`
+- `/yalpexample lang`
+- `/yalpexample lang reload`
+- `/yalpexample definitions list`
+- `/yalpexample definitions info <id>`
+- `/yalpexample definitions toggle <id>`
+- `/yalpexample resource`
+- `/yalpexample json show`
+- `/yalpexample json save`
+- `/yalpexample json reload`
+- `/yalpexample text`
+- `/yalpexample rainbow`
+- `/yalpexample cooldown`
+- `/yalpexample gui`
+- `/yalpexample hooks`
+- `/yalpexample item`
+- `/yalpexample scheduler`
 
 ## MiniBoot
 

@@ -23,6 +23,11 @@
             <artifactId>bukkit</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -43,6 +48,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>voiidstudios:yalp-core</include>
+                                    <include>com.google.code.gson:gson</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

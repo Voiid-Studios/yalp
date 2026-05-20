@@ -57,6 +57,13 @@ Keep public APIs small. Put server-version tricks and reflection in internal hel
 ## Current Components
 
 - `logger`: readable console output and debug mode.
+- `translations`: core translation contracts, Bukkit YAML language files.
+- `yaml-folders`: modular YAML definition registries.
+- `commands`: small command wrapper for declared Bukkit commands.
+- `resources`: bundled resource reading/copying.
+- `json-files`: small JSON-backed file helpers.
+- `rich-text`: platform-neutral text model and Bukkit fallback sending.
+- `platform-adapter`: platform lifecycle and bridge contract.
 - `compatibility`: best-effort server and feature checks.
 - `messages`: colors, placeholders, lines, prefix utilities.
 - `config`: Bukkit YAML helpers.

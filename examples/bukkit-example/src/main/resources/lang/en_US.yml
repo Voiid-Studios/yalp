@@ -1,0 +1,5 @@
+prefix: "&8[&bExample&8]"
+commands:
+  reload: "{prefix} &aTranslations reloaded successfully."
+  cooldown: "{prefix} &ePlease wait {time}."
+  no-permission: "{prefix} &cYou do not have permission."

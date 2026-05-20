@@ -118,4 +118,4 @@ gui.open(player);
 
 ## Example Plugin
 
-See `examples/bukkit-example` for a complete dependent plugin with `depend: [YALP]`, config loading, compatibility info, hooks, items, GUI, cooldown command usage, and scheduler usage.
+See `examples/bukkit-example` for a complete dependent plugin with `depend: [YALP]`, translations, YAML definitions, resources, JSON files, rich text, compatibility info, hooks, items, GUI, cooldown command usage, and scheduler usage.
