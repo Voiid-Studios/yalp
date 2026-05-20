@@ -45,51 +45,38 @@ jobs:
           mvn clean package
           mvn javadoc:aggregate
 
-      - name: Checkout docs branch
-        if: steps.branch.outputs.valid == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: docs
-          path: docs-branch
-          token: ${{ secrets.DOCS_DEPLOY_TOKEN }}
-
-      - name: Replace JavaDocs folder
+      - name: Prepare JavaDocs site
         if: steps.branch.outputs.valid == 'true'
         run: |
-          rm -rf docs-branch/jd
-          mkdir -p docs-branch/jd
+          mkdir -p javadocs-site
 
-          cp -R source/target/site/apidocs/. docs-branch/jd/
-
-          # If Maven or the workflow leaves everything inside jd/apidocs/,
-          # flatten it into jd/ directly.
-          if [ -d docs-branch/jd/apidocs ]; then
-            echo "Flattening jd/apidocs into jd..."
-
-            TEMP_DIR="$(mktemp -d)"
-            cp -R docs-branch/jd/apidocs/. "$TEMP_DIR/"
-
-            find docs-branch/jd -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-
-            cp -R "$TEMP_DIR/." docs-branch/jd/
-            rm -rf "$TEMP_DIR"
+          if [ -f source/target/site/apidocs/index.html ]; then
+            cp -R source/target/site/apidocs/. javadocs-site/
+          elif [ -f source/target/site/apidocs/apidocs/index.html ]; then
+            cp -R source/target/site/apidocs/apidocs/. javadocs-site/
+          else
+            echo "JavaDocs index.html not found."
+            find source/target/site -maxdepth 5 -type f | sort
+            exit 1
           fi
 
-          touch docs-branch/.nojekyll
+          touch javadocs-site/.nojekyll
 
-      - name: Commit and push JavaDocs
+      - name: Deploy to docs branch
         if: steps.branch.outputs.valid == 'true'
-        working-directory: docs-branch
+        env:
+          DOCS_DEPLOY_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
         run: |
+          cd javadocs-site
+
+          git init
+          git checkout -b docs
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add jd .nojekyll
+          git add .
+          git commit -m "Deploy JavaDocs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
 
-          if git diff --cached --quiet; then
-            echo "No JavaDocs changes to deploy."
-            exit 0
-          fi
-
-          git commit -m "Update JavaDocs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
-          git push origin docs
+          git remote add origin https://x-access-token:${DOCS_DEPLOY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git push --force origin docs
