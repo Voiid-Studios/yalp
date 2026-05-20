@@ -1,0 +1,84 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches-ignore:
+      - docs
+  workflow_dispatch:
+
+jobs:
+  deploy-docs:
+    if: ${{ github.ref_name != 'docs' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate version branch
+        id: branch
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+
+          if [[ "$BRANCH" =~ ^[0-9]{2}\.[0-9]{2}$ ]]; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+            echo "Using version branch: $BRANCH"
+          else
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping branch: $BRANCH"
+          fi
+
+      - name: Checkout source
+        if: steps.branch.outputs.valid == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        if: steps.branch.outputs.valid == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Set up Python
+        if: steps.branch.outputs.valid == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install MkDocs
+        if: steps.branch.outputs.valid == 'true'
+        run: |
+          pip install mkdocs mkdocs-material
+
+      - name: Build project and JavaDocs
+        if: steps.branch.outputs.valid == 'true'
+        run: |
+          mvn clean package
+          mvn javadoc:aggregate
+
+      - name: Build MkDocs
+        if: steps.branch.outputs.valid == 'true'
+        run: |
+          mkdocs build --site-dir site
+
+      - name: Copy JavaDocs into site
+        if: steps.branch.outputs.valid == 'true'
+        run: |
+          mkdir -p site/jd
+          cp -R target/site/apidocs/* site/jd/
+          touch site/.nojekyll
+
+      - name: Deploy to docs branch
+        if: steps.branch.outputs.valid == 'true'
+        env:
+          DOCS_DEPLOY_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
+        run: |
+          cd site
+          git init
+          git checkout -b docs
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          git commit -m "Deploy docs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
+
+          git remote add origin https://x-access-token:${DOCS_DEPLOY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git push --force origin docs
