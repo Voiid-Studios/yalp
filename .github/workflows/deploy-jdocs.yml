@@ -61,6 +61,20 @@ jobs:
 
           cp -R source/target/site/apidocs/. docs-branch/jd/
 
+          # If Maven or the workflow leaves everything inside jd/apidocs/,
+          # flatten it into jd/ directly.
+          if [ -d docs-branch/jd/apidocs ]; then
+            echo "Flattening jd/apidocs into jd..."
+
+            TEMP_DIR="$(mktemp -d)"
+            cp -R docs-branch/jd/apidocs/. "$TEMP_DIR/"
+
+            find docs-branch/jd -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+            cp -R "$TEMP_DIR/." docs-branch/jd/
+            rm -rf "$TEMP_DIR"
+          fi
+
           touch docs-branch/.nojekyll
 
       - name: Commit and push JavaDocs
