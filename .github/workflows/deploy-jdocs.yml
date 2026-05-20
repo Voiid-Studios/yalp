@@ -53,7 +53,7 @@ jobs:
           path: docs-branch
           token: ${{ secrets.DOCS_DEPLOY_TOKEN }}
 
-      - name: Replace only JavaDocs folder
+      - name: Replace JavaDocs folder
         if: steps.branch.outputs.valid == 'true'
         run: |
           rm -rf docs-branch/jd
