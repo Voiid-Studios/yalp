@@ -1,4 +1,4 @@
-name: Deploy Documentation
+name: Deploy JavaDocs
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-docs:
+  deploy-javadocs:
     if: ${{ github.ref_name != 'docs' }}
     runs-on: ubuntu-latest
 
@@ -25,9 +25,11 @@ jobs:
             echo "Skipping branch: $BRANCH"
           fi
 
-      - name: Checkout source
+      - name: Checkout source branch
         if: steps.branch.outputs.valid == 'true'
         uses: actions/checkout@v4
+        with:
+          path: source
 
       - name: Set up Java
         if: steps.branch.outputs.valid == 'true'
@@ -36,49 +38,44 @@ jobs:
           distribution: temurin
           java-version: 8
 
-      - name: Set up Python
+      - name: Build JavaDocs
         if: steps.branch.outputs.valid == 'true'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Install MkDocs
-        if: steps.branch.outputs.valid == 'true'
-        run: |
-          pip install mkdocs mkdocs-material
-
-      - name: Build project and JavaDocs
-        if: steps.branch.outputs.valid == 'true'
+        working-directory: source
         run: |
           mvn clean package
           mvn javadoc:aggregate
 
-      - name: Build MkDocs
+      - name: Checkout docs branch
+        if: steps.branch.outputs.valid == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: docs
+          path: docs-branch
+          token: ${{ secrets.DOCS_DEPLOY_TOKEN }}
+
+      - name: Replace only JavaDocs folder
         if: steps.branch.outputs.valid == 'true'
         run: |
-          mkdocs build --site-dir site
+          rm -rf docs-branch/jd
+          mkdir -p docs-branch/jd
 
-      - name: Copy JavaDocs into site
+          cp -R source/target/site/apidocs/. docs-branch/jd/
+
+          touch docs-branch/.nojekyll
+
+      - name: Commit and push JavaDocs
         if: steps.branch.outputs.valid == 'true'
+        working-directory: docs-branch
         run: |
-          mkdir -p site/jd
-          cp -R target/site/apidocs/* site/jd/
-          touch site/.nojekyll
-
-      - name: Deploy to docs branch
-        if: steps.branch.outputs.valid == 'true'
-        env:
-          DOCS_DEPLOY_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
-        run: |
-          cd site
-          git init
-          git checkout -b docs
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add .
-          git commit -m "Deploy docs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
+          git add jd .nojekyll
 
-          git remote add origin https://x-access-token:${DOCS_DEPLOY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          git push --force origin docs
+          if git diff --cached --quiet; then
+            echo "No JavaDocs changes to deploy."
+            exit 0
+          fi
+
+          git commit -m "Update JavaDocs from ${GITHUB_REF_NAME} (${GITHUB_SHA})"
+          git push origin docs
